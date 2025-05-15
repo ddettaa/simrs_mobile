@@ -1,40 +1,88 @@
 import 'package:flutter/material.dart';
-import 'patients_screen.dart';
-import 'poli_screen.dart';
 
 class HomeScreen extends StatefulWidget {
+  const HomeScreen({Key? key}) : super(key: key);
+
   @override
-  _HomeScreenState createState() => _HomeScreenState();
+  State<HomeScreen> createState() => _HomeScreen();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
+class _HomeScreen extends State<HomeScreen> {
   int _selectedIndex = 0;
-
-  static List<Widget> get _pages => <Widget>[PatientsScreen(), PoliScreen()];
-
-  void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
-  }
-
+  BottomNavigationBarType _bottomNavType = BottomNavigationBarType.fixed;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Flutter Admin CRUD')),
-      body: _pages[_selectedIndex],
+      appBar: AppBar(title: const Text('Simple Bottom Navigation')),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text("Selected Page: ${_navBarItems[_selectedIndex].label}"),
+            const SizedBox(height: 20),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Text("BottomNavBar Type :"),
+                const SizedBox(width: 16),
+                DropdownButton<BottomNavigationBarType>(
+                  hint: Text(_bottomNavType.name),
+                  items:
+                      BottomNavigationBarType.values
+                          .map(
+                            (item) => DropdownMenuItem(
+                              value: item,
+                              child: Text(item.name),
+                            ),
+                          )
+                          .toList(),
+                  onChanged: (val) {
+                    if (val == null) return;
+                    setState(() {
+                      _bottomNavType = val;
+                    });
+                  },
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
       bottomNavigationBar: BottomNavigationBar(
-        items: const <BottomNavigationBarItem>[
-          BottomNavigationBarItem(icon: Icon(Icons.people), label: 'Patients'),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.local_hospital),
-            label: 'Poli',
-          ),
-        ],
         currentIndex: _selectedIndex,
-        selectedItemColor: Colors.blue,
-        onTap: _onItemTapped,
+        selectedItemColor: const Color(0xff6200ee),
+        unselectedItemColor: const Color(0xff757575),
+        type: _bottomNavType,
+        onTap: (index) {
+          setState(() {
+            _selectedIndex = index;
+          });
+        },
+        items: _navBarItems,
       ),
     );
   }
 }
+
+const _navBarItems = [
+  BottomNavigationBarItem(
+    icon: Icon(Icons.home_outlined),
+    activeIcon: Icon(Icons.home_rounded),
+    label: 'Home',
+  ),
+  BottomNavigationBarItem(
+    icon: Icon(Icons.bookmark_border_outlined),
+    activeIcon: Icon(Icons.bookmark_rounded),
+    label: 'patiens',
+  ),
+  BottomNavigationBarItem(
+    icon: Icon(Icons.shopping_bag_outlined),
+    activeIcon: Icon(Icons.shopping_bag),
+    label: 'Poli',
+  ),
+  BottomNavigationBarItem(
+    icon: Icon(Icons.person_outline_rounded),
+    activeIcon: Icon(Icons.person_rounded),
+    label: 'Setting',
+  ),
+];
